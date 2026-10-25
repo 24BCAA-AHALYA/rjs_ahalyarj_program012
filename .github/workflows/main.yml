@@ -1,15 +1,21 @@
-name: Shopping Cart Autograding
+
+name: Deploy React Shopping Cart
 
 on:
   push:
+    branches:
+      - main
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  test:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout student repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -21,5 +27,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run React tests
-        run: npm test -- --watchAll=false
+      - name: Build React app
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
